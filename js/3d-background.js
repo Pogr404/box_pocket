@@ -16,7 +16,7 @@ if (typeof THREE !== 'undefined') {
     camera.position.setZ(10); 
 
     // 2. Создаем простой куб (вместо сложной модели)
-    const geometry = new THREE.BoxGeometry(3, 3, 3); // Задаем размер куба
+    const geometry = new THREE.BoxGeometry(5, 5, 5); // Задаем размер куба
     const material = new THREE.MeshStandardMaterial({ 
         color: 0xaaaaaa, // Цвет куба (серый)
         roughness: 0.5 
