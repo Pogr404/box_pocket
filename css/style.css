@@ -10,9 +10,9 @@
     --border-color: #eee;
     --accent-color: #a07d5a;
 
-    /* --- Шрифты --- */
     --primary-font: 'Montserrat', sans-serif;
     --heading-font: 'Oswald', sans-serif;
+    --main-border-radius: 25px; /* <-- НОВИНКА: Единый радиус скругления */
 }
 
 /* --- Темная тема --- */
@@ -24,8 +24,19 @@ body.dark-mode {
     --border-color: #444;
 }
 
+/* --- Стеклянная тема --- */
+body.glass-mode {
+    --primary-bg: #eaf2f8; 
+    --glass-bg: rgba(255, 255, 255, 0.2); 
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --text-color: #2c3e50;
+    --heading-color: #1a252f;
+}
 
-/* --- Базовые стили и сброс --- */
+
+/* ==========================================================================
+   2. БАЗОВЫЕ СТИЛИ И "СКЕЛЕТ" САЙТА
+   ========================================================================== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { 
@@ -36,37 +47,38 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* --- 3D ФОН --- */
-#bg-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    opacity: 0.3; /* <-- Увеличили заметность */
-    mix-blend-mode: difference; /* <-- ИСПРАВЛЕНО: Этот фильтр решает проблему с цветом */
-}
-
-
-/* --- Кастомный курсор --- */
+#bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; mix-blend-mode: difference; }
 html, body, a, button, input[type="text"], input[type="email"], textarea { cursor: url('../images/box.png'), auto; }
 a, button { cursor: url('../images/box2.png'), auto; }
 input[type="text"], input[type="email"], textarea { cursor: url('../images/box2.png'), auto; }
 
-
-/* --- Общие классы и теги --- */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 h1, h2 { font-family: var(--heading-font); color: var(--heading-color); text-align: center; margin-bottom: 40px; }
 h2 { font-size: 2.5rem; }
-section { padding: 80px 0; }
+
+/* ОБЩИЙ СТИЛЬ ДЛЯ ВСЕХ СЕКЦИЙ, КОТОРЫЙ НЕ МЕНЯЕТСЯ */
+section {
+    padding: 60px 0; /* Уменьшили вертикальные отступы для всех */
+    margin-bottom: 25px; /* Добавили внешний отступ для всех */
+    border-radius: var(--main-border-radius); /* Применяем единое скругление */
+    transition: background 0.3s, border 0.3s; /* Плавный переход */
+}
+
 a { color: var(--accent-color); text-decoration: none; }
 
 
 /* ==========================================================================
-   2. ШАПКА САЙТА (ВЕРХНЯЯ ЧАСТЬ)
+   3. ШАПКА САЙТА (HEADER)
    ========================================================================== */
-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border-color); }
+header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 20px; 
+    margin-bottom: 25px; /* Такой же отступ, как у секций */
+    border-radius: var(--main-border-radius);
+    transition: background 0.3s, border 0.3s;
+}
 .header-right { display: flex; align-items: center; gap: 20px; }
 .header-left { text-align: left; }
 .contacts-header { text-align: right; margin-top: 0; }
@@ -75,15 +87,16 @@ header .slogan { font-size: 1rem; color: #999; margin-top: 5px; }
 header .contacts-header a { color: var(--text-color); margin: 0 5px; }
 #theme-toggle { background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; padding: 5px; display: flex; align-items: center; justify-content: center; }
 #theme-toggle svg { width: 100%; height: 100%; stroke: var(--text-color); }
-.moon-icon { display: none; }
-.dark-mode .sun-icon { display: none; }
+.sun-icon, .moon-icon, .glass-icon { display: none; }
+body:not(.dark-mode):not(.glass-mode) .sun-icon { display: block; }
 .dark-mode .moon-icon { display: block; }
+.glass-mode .glass-icon { display: block; }
 
 
 /* ==========================================================================
-   3. ГЛАВНЫЙ ЭКРАН (С ФОНОМ И ЗАГОЛОВКОМ)
+   4. ГЛАВНЫЙ ЭКРАН (HERO) - он без фона, поэтому его не трогаем
    ========================================================================== */
-.hero { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white; position: relative; overflow: hidden; padding: 60px 20px; }
+.hero { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white; position: relative; overflow: hidden; padding: 60px 20px; margin-bottom: 25px; }
 .hero-background { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; z-index: 1; background-image: inherit; background-size: cover; background-position: center; filter: blur(8px) brightness(0.7); transition: transform 0.2s ease-out; }
 .hero-content { position: relative; z-index: 2; max-width: 900px; }
 .hero h1 { font-size: 5.5rem; color: white; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); line-height: 1.2; }
@@ -94,11 +107,57 @@ header .contacts-header a { color: var(--text-color); margin: 0 5px; }
 
 
 /* ==========================================================================
-   4. ГАЛЕРЕЯ ТОВАРОВ ("КОЛЛЕКЦИЯ")
+   5. СТИЛИ ТЕМ ДЛЯ БЛОКОВ
    ========================================================================== */
-.collection-section { background-color: var(--secondary-bg); }
+/* Светлая и темная тема */
+body:not(.glass-mode) header,
+body:not(.glass-mode) .collection-section,
+body:not(.glass-mode) .about-section,
+body:not(.glass-mode) .model-section,
+body:not(.glass-mode) .contact-section {
+    background-color: var(--secondary-bg);
+}
+body:not(.glass-mode) .gallery-item {
+    background-color: var(--primary-bg);
+    border-radius: 5px; /* Обычные углы для этих тем */
+}
+
+/* Стеклянная тема */
+.glass-mode header,
+.glass-mode .collection-section,
+.glass-mode .about-section,
+.glass-mode .model-section,
+.glass-mode .contact-section {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+.glass-mode h2, .glass-mode p, .glass-mode .item-info h3, .glass-mode .item-info p {
+    text-shadow: 0px 1px 3px rgba(0,0,0,0.1); /* Тень для читаемости */
+}
+.glass-mode .gallery-item {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--main-border-radius); /* Единое скругление */
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+.glass-mode #contact-form input, .glass-mode #contact-form textarea {
+    background: rgba(255,255,255, 0.2);
+    border: 1px solid rgba(255,255,255, 0.4);
+    color: var(--heading-color);
+}
+.glass-mode #contact-form input::placeholder, .glass-mode #contact-form textarea::placeholder {
+    color: var(--heading-color);
+    opacity: 0.7;
+}
+
+
+/* ==========================================================================
+   6. ГАЛЕРЕЯ, О НАС, 3D, КОНТАКТЫ (остальные стили)
+   ========================================================================== */
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
-.gallery-item { background-color: var(--primary-bg); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 5px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.gallery-item { box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; transition: all 0.3s ease; }
 .dark-mode .gallery-item { box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 .gallery-item:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 .dark-mode .gallery-item:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
@@ -107,18 +166,13 @@ header .contacts-header a { color: var(--text-color); margin: 0 5px; }
 .item-info h3 { font-family: var(--heading-font); font-size: 1.5rem; color: var(--heading-color); margin-bottom: 10px; }
 .item-info p { font-size: 0.95rem; }
 
-
-/* ==========================================================================
-   5. СЕКЦИИ "О НАС" И "3D-МОДЕЛЬ"
-   ========================================================================== */
 .about-section p { font-size: 1.1rem; }
-.model-section p { margin-bottom: 30px; }
+.model-section h2,
+.model-section p {
+    text-align: center; /* <-- ЦЕНТРИРУЕМ ЗАГОЛОВК И ТЕКСТ */
+    margin-bottom: 30px; 
+}
 
-
-/* ==========================================================================
-   6. СЕКЦИЯ "СВЯЖИТЕСЬ С НАМИ" (ФОРМА)
-   ========================================================================== */
-.contact-section { background-color: var(--secondary-bg); }
 .contact-details { text-align: center; margin-bottom: 40px; font-size: 1.1rem; }
 .contact-details a { color: var(--text-color); text-decoration: none; }
 .contact-details a:hover { color: var(--accent-color); }
@@ -131,7 +185,7 @@ header .contacts-header a { color: var(--text-color); margin: 0 5px; }
 
 
 /* ==========================================================================
-   7. ФУТЕР (НИЖНЯЯ ЧАСТЬ САЙТА)
+   7. ФУТЕР
    ========================================================================== */
 footer { background-color: #2c2c2c; color: #ccc; text-align: center; padding: 40px 20px; }
 .dark-mode footer { background-color: #111; }
@@ -143,7 +197,7 @@ footer { background-color: #2c2c2c; color: #ccc; text-align: center; padding: 40
 
 
 /* ==========================================================================
-   8. СПЕЦЭФФЕКТЫ (УВЕДОМЛЕНИЯ, ЧАСТИЦЫ)
+   8. СПЕЦЭФФЕКТЫ
    ========================================================================== */
 .notification { position: fixed; top: 20px; right: 20px; background-color: #2c2c2c; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; z-index: 1000; transform: translateX(120%); opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
 .notification.show { transform: translateX(0); opacity: 1; visibility: visible; }

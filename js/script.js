@@ -1,16 +1,36 @@
 // Ждем, пока вся HTML-структура страницы будет готова
 document.addEventListener('DOMContentLoaded', () => {
-    // --- КОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ТЕМЫ ---
+    // --- ОБНОВЛЕННЫЙ КОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ТЕМ ---
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
-    const applyTheme = (theme) => { if (theme === 'dark') { body.classList.add('dark-mode'); } else { body.classList.remove('dark-mode'); } };
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    applyTheme(savedTheme);
+    const themes = ['light', 'dark', 'glass']; // Массив всех тем
+
+    // Функция для применения темы
+    const applyTheme = (theme) => {
+        body.classList.remove('dark-mode', 'glass-mode'); // Сначала убираем все классы тем
+        if (theme === 'dark') {
+            body.classList.add('dark-mode');
+        } else if (theme === 'glass') {
+            body.classList.add('glass-mode');
+        }
+        // Для 'light' ничего не добавляем, это тема по умолчанию
+    };
+
+    // Проверяем, есть ли сохраненная тема
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(currentTheme);
+
+    // Слушаем клик по кнопке
     themeToggle.addEventListener('click', () => {
-        const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
+        const currentIndex = themes.indexOf(currentTheme);
+        const nextIndex = (currentIndex + 1) % themes.length; // Находим индекс следующей темы по кругу
+        const newTheme = themes[nextIndex];
+        
         applyTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Сохраняем выбор
+        currentTheme = newTheme; // Обновляем текущую тему
     });
+
 
     // --- КОД ДЛЯ ГИРОСКОПИЧЕСКОГО ПАРАЛЛАКСА ---
     function initGyroParallax() {
@@ -64,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => { console.error("Could not load config file:", error); document.body.innerHTML = '<h1 style="text-align:center; margin-top: 50px;">Ошибка загрузки конфигурации сайта.</h1>'; });
 });
 
-// --- ОСТАЛЬНЫЕ ФУНКЦИИ ---
+// --- ОСТАЛЬНЫЕ ФУНКЦИИ (УВЕДОМЛЕНИЯ, ФОРМА И Т.Д.) ---
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -73,7 +93,6 @@ function showNotification(message, type = 'success') {
     setTimeout(() => { notification.classList.add('show'); }, 100);
     setTimeout(() => { notification.classList.remove('show'); setTimeout(() => { document.body.removeChild(notification); }, 500); }, 4000);
 }
-
 function handleFormSubmit(event) {
     event.preventDefault();
     const form = event.target;
@@ -84,11 +103,10 @@ function handleFormSubmit(event) {
     const publicKey = 'jJ6WclhTKvXEfYgyb';
     button.textContent = 'Отправка...'; button.disabled = true;
     emailjs.sendForm(serviceID, templateID, form, publicKey)
-        .then(() => { showNotification('Запрос принят, спасибо!'); form.reset(); },
+        .then(() => { showNotification('Запрос принят, спасибо!'); form.reset(); }, 
               (err) => { showNotification('Произошла ошибка. Попробуйте снова.', 'error'); console.error('EmailJS error:', JSON.stringify(err)); })
         .finally(() => { button.textContent = originalButtonText; button.disabled = false; });
 }
-
 function buildWebsite(data) {
     document.title = data.header.logoText;
     document.getElementById('logo-text').textContent = data.header.logoText;
@@ -110,33 +128,20 @@ function buildWebsite(data) {
     document.getElementById('hero-cta').textContent = data.hero.callToAction;
     document.getElementById('collection-title').textContent = data.collection.title;
     const galleryContainer = document.getElementById('gallery-container');
-    galleryContainer.innerHTML = '';
-
-    // --- НАЧАЛО ИСПРАВЛЕНИЙ ---
+    galleryContainer.innerHTML = ''; 
     data.collection.items.forEach((item, index) => {
-        // Если у товара нет ID, присваиваем ему временный ID на основе его позиции
-        if (!item.id) {
-            item.id = `temp_${index}`;
-        }
-
-        // "Умная" обработка пути к картинке
+        if (!item.id) { item.id = `temp_${index}`; }
         let imagePath = item.image;
         if (imagePath.includes('/')) {
-            // Если путь уже полный (например, "/images/image4.jpg"), убираем лишний слэш в начале
             imagePath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
         } else {
-            // Если указано только имя файла (например, "image1.jpg"), добавляем папку
             imagePath = `images/${imagePath}`;
         }
-
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
-        // Используем исправленный imagePath
         galleryItem.innerHTML = `<img src="${imagePath}" alt="${item.name}"><div class="item-info"><h3>${item.name}</h3><p>${item.description}</p></div>`;
         galleryContainer.appendChild(galleryItem);
     });
-    // --- КОНЕЦ ИСПРАВЛЕНИЙ ---
-
     document.getElementById('about-title').textContent = data.about.title;
     document.getElementById('about-text').textContent = data.about.text;
     document.getElementById('contact-title').textContent = data.contact.title;
