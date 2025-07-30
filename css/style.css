@@ -1,100 +1,78 @@
 /* ==========================================================================
    1. ОБЩИЕ НАСТРОЙКИ И ПЕРЕМЕННЫЕ
-   Здесь хранятся все основные цвета и шрифты сайта.
-   Меняя цвет здесь, вы меняете его сразу везде.
    ========================================================================== */
 :root {
     /* --- Светлая тема (по умолчанию) --- */
-    --primary-bg: #ffffff;      /* Основной фон страниц (белый) */
-    --secondary-bg: #f9f9f9;    /* Второстепенный фон для секций (светло-серый) */
-    --text-color: #4a4a4a;      /* Основной цвет текста (темно-серый) */
-    --heading-color: #2c2c2c;   /* Цвет заголовков (почти черный) */
-    --border-color: #eee;       /* Цвет рамок и разделителей */
-    --accent-color: #a07d5a;    /* Акцентный цвет (для кнопок, ссылок) */
+    --primary-bg: #ffffff;
+    --secondary-bg: rgba(249, 249, 249, 0.85);
+    --text-color: #4a4a4a;
+    --heading-color: #2c2c2c;
+    --border-color: #eee;
+    --accent-color: #a07d5a;
 
     /* --- Шрифты --- */
-    --primary-font: 'Montserrat', sans-serif; /* Шрифт для основного текста */
-    --heading-font: 'Oswald', sans-serif;     /* Шрифт для заголовков */
+    --primary-font: 'Montserrat', sans-serif;
+    --heading-font: 'Oswald', sans-serif;
 }
 
 /* --- Темная тема --- */
-/* Эти цвета применяются, когда у body есть класс .dark-mode */
 body.dark-mode {
-    --primary-bg: #1a1a1a;      /* Основной фон (темный) */
-    --secondary-bg: #252525;    /* Второстепенный фон (еще темнее) */
-    --text-color: #ccc;         /* Основной текст (светло-серый) */
-    --heading-color: #f5f5f5;   /* Заголовки (почти белый) */
-    --border-color: #444;       /* Рамки (темно-серый) */
+    --primary-bg: #1a1a1a;
+    --secondary-bg: rgba(37, 37, 37, 0.85);
+    --text-color: #ccc;
+    --heading-color: #f5f5f5;
+    --border-color: #444;
 }
 
-/* Стили для 3D-фона */
+
+/* --- Базовые стили и сброс --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { 
+    font-family: var(--primary-font); 
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.7;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* --- 3D ФОН --- */
 #bg-canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1; /* Помещаем фон позади всего контента */
-    opacity: 0.15; /* Делаем его полупрозрачным и незаметным */
+    z-index: -1;
+    opacity: 0.3; /* <-- Увеличили заметность */
+    mix-blend-mode: difference; /* <-- ИСПРАВЛЕНО: Этот фильтр решает проблему с цветом */
 }
 
-
-/* --- Базовые стили и сброс --- */
-/* Убираем стандартные отступы у всех элементов */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; } /* Плавная прокрутка по якорям */
-body { 
-    font-family: var(--primary-font); 
-    background-color: var(--primary-bg);
-    color: var(--text-color);
-    line-height: 1.7;
-    transition: background-color 0.3s, color 0.3s; /* Плавный переход между темами */
-}
 
 /* --- Кастомный курсор --- */
-/* Устанавливаем курсор-коробку для разных состояний */
-html, body { cursor: url('../images/box.png'), auto; } /* Закрытая коробка по умолчанию */
-a, button, input[type="text"], input[type="email"], textarea { cursor: url('../images/box2.png'), auto; } /* Открытая коробка для интерактивных элементов */
+html, body, a, button, input[type="text"], input[type="email"], textarea { cursor: url('../images/box.png'), auto; }
+a, button { cursor: url('../images/box2.png'), auto; }
+input[type="text"], input[type="email"], textarea { cursor: url('../images/box2.png'), auto; }
 
 
 /* --- Общие классы и теги --- */
-/* Этот класс задает максимальную ширину контента и центрирует его */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-/* Стили для всех заголовков H1 и H2 */
 h1, h2 { font-family: var(--heading-font); color: var(--heading-color); text-align: center; margin-bottom: 40px; }
-h2 { font-size: 2.5rem; /* <-- Размер заголовков секций (Наша коллекция и т.д.) */ }
-/* Общие стили для всех больших секций */
+h2 { font-size: 2.5rem; }
 section { padding: 80px 0; }
-/* Стили для всех ссылок */
 a { color: var(--accent-color); text-decoration: none; }
 
 
 /* ==========================================================================
    2. ШАПКА САЙТА (ВЕРХНЯЯ ЧАСТЬ)
    ========================================================================== */
-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 20px 0; 
-    border-bottom: 1px solid var(--border-color); 
-}
-.header-left { text-align: left; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border-color); }
 .header-right { display: flex; align-items: center; gap: 20px; }
+.header-left { text-align: left; }
 .contacts-header { text-align: right; margin-top: 0; }
-header .logo { 
-    font-family: var(--heading-font); 
-    font-size: 2.5rem; /* <-- Размер названия фирмы на ПК */
-    color: var(--heading-color); 
-}
-header .slogan { 
-    font-size: 1rem; /* <-- Размер слогана */
-    color: #999; 
-    margin-top: 5px; 
-}
+header .logo { font-family: var(--heading-font); font-size: 2.5rem; color: var(--heading-color); }
+header .slogan { font-size: 1rem; color: #999; margin-top: 5px; }
 header .contacts-header a { color: var(--text-color); margin: 0 5px; }
-
-/* Кнопка переключения темы (солнце/луна) */
 #theme-toggle { background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; padding: 5px; display: flex; align-items: center; justify-content: center; }
 #theme-toggle svg { width: 100%; height: 100%; stroke: var(--text-color); }
 .moon-icon { display: none; }
@@ -106,40 +84,11 @@ header .contacts-header a { color: var(--text-color); margin: 0 5px; }
    3. ГЛАВНЫЙ ЭКРАН (С ФОНОМ И ЗАГОЛОВКОМ)
    ========================================================================== */
 .hero { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white; position: relative; overflow: hidden; padding: 60px 20px; }
-.hero-background { 
-    position: absolute; 
-    top: -20px; left: -20px; right: -20px; bottom: -20px; 
-    z-index: 1; 
-    background-image: inherit; 
-    background-size: cover; 
-    background-position: center; 
-    filter: blur(8px) brightness(0.7); /* <-- Поменяйте 8px, чтобы изменить силу размытия */
-    transition: transform 0.2s ease-out; 
-}
+.hero-background { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; z-index: 1; background-image: inherit; background-size: cover; background-position: center; filter: blur(8px) brightness(0.7); transition: transform 0.2s ease-out; }
 .hero-content { position: relative; z-index: 2; max-width: 900px; }
-.hero h1 { 
-    font-size: 5.5rem; /* <-- Размер главного заголовка на ПК */
-    color: white; 
-    margin-bottom: 20px; 
-    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); 
-    line-height: 1.2; 
-}
-/* Кнопка "Посмотреть коллекцию" */
-.cta-button { 
-    display: inline-block; 
-    padding: 12px 25px; /* <-- Отступы (влияют на размер кнопки) */
-    font-size: 0.9rem; /* <-- Размер текста на кнопке */
-    letter-spacing: 0.5px; 
-    background-color: var(--accent-color); 
-    color: white; 
-    border-radius: 5px; 
-    text-transform: uppercase; 
-    font-weight: 500; 
-    transition: background-color 0.3s ease; 
-    text-decoration: none; 
-}
+.hero h1 { font-size: 5.5rem; color: white; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); line-height: 1.2; }
+.cta-button { display: inline-block; padding: 12px 25px; font-size: 0.9rem; letter-spacing: 0.5px; background-color: var(--accent-color); color: white; border-radius: 5px; text-transform: uppercase; font-weight: 500; transition: background-color 0.3s ease; text-decoration: none; }
 .cta-button:hover { background-color: #8a6c4d; color: white; }
-/* Кнопка "Включить 3D эффект" для iPhone */
 #gyro-permission-button { display: none; margin-top: 20px; background-color: #444; }
 #gyro-permission-button:hover { background-color: #222; }
 
@@ -149,13 +98,11 @@ header .contacts-header a { color: var(--text-color); margin: 0 5px; }
    ========================================================================== */
 .collection-section { background-color: var(--secondary-bg); }
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
-/* Карточка товара */
 .gallery-item { background-color: var(--primary-bg); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 5px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; }
 .dark-mode .gallery-item { box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 .gallery-item:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 .dark-mode .gallery-item:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 .gallery-item img { width: 100%; height: 250px; object-fit: cover; display: block; }
-/* Текстовый блок под картинкой товара */
 .item-info { padding: 25px; }
 .item-info h3 { font-family: var(--heading-font); font-size: 1.5rem; color: var(--heading-color); margin-bottom: 10px; }
 .item-info p { font-size: 0.95rem; }
@@ -175,7 +122,6 @@ header .contacts-header a { color: var(--text-color); margin: 0 5px; }
 .contact-details { text-align: center; margin-bottom: 40px; font-size: 1.1rem; }
 .contact-details a { color: var(--text-color); text-decoration: none; }
 .contact-details a:hover { color: var(--accent-color); }
-/* Сама форма */
 #contact-form { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
 #contact-form input, #contact-form textarea { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 5px; font-family: var(--primary-font); font-size: 1rem; background-color: var(--primary-bg); color: var(--text-color); }
 #contact-form textarea { min-height: 150px; resize: vertical; }
@@ -192,7 +138,6 @@ footer { background-color: #2c2c2c; color: #ccc; text-align: center; padding: 40
 .social-icons a { margin: 0 10px; color: white; font-size: 1.2rem; }
 .social-icons a:hover { color: var(--accent-color); }
 #copyright-text { margin-bottom: 15px; font-size: 0.9rem; }
-/* Контакты, которые появляются в футере на мобильных */
 .footer-contacts { display: none; } 
 .footer-contacts a { display: block; color: white; margin-bottom: 10px; }
 
@@ -200,48 +145,32 @@ footer { background-color: #2c2c2c; color: #ccc; text-align: center; padding: 40
 /* ==========================================================================
    8. СПЕЦЭФФЕКТЫ (УВЕДОМЛЕНИЯ, ЧАСТИЦЫ)
    ========================================================================== */
-/* Всплывающее уведомление после отправки формы */
 .notification { position: fixed; top: 20px; right: 20px; background-color: #2c2c2c; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; z-index: 1000; transform: translateX(120%); opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
 .notification.show { transform: translateX(0); opacity: 1; visibility: visible; }
 .notification .icon { width: 24px; height: 24px; margin-right: 15px; }
 .notification.success .icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234caf50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'%3E%3C/path%3E%3Cpolyline points='22 4 12 14.01 9 11.01'%3E%3C/polyline%3E%3C/svg%3E"); }
 .notification.error .icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f44336' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='15' y1='9' x2='9' y2='15'%3E%3C/line%3E%3Cline x1='9' y1='9' x2='15' y2='15'%3E%3C/line%3E%3C/svg%3E"); }
-/* Частицы-коробочки, летящие за курсором */
 .particle-box { position: fixed; z-index: 9999; pointer-events: none; width: 10px; height: 10px; background-color: var(--accent-color); opacity: 0.8; border-radius: 2px; animation: fallAndFade 1.5s ease-out forwards; }
 @keyframes fallAndFade { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(150px) scale(0.3) rotate(180deg); opacity: 0; } }
 
 
 /* ==========================================================================
    9. АДАПТИВНОСТЬ (СТИЛИ ДЛЯ МОБИЛЬНЫХ ТЕЛЕФОНОВ)
-   Все, что находится здесь, применяется только на экранах шириной до 768px.
    ========================================================================== */
 @media (max-width: 768px) {
-    /* Уменьшаем общие заголовки */
     h2 { font-size: 2rem; }
-
-    /* Перестраиваем шапку в колонку и центрируем */
     header { flex-direction: column; gap: 20px; }
     .header-left { text-align: center; order: 1; } 
     .header-right { order: 2; }
-    header .contacts-header { display: none; } /* Скрываем контакты в шапке */
-    header .logo { font-size: 3rem; } /* Увеличиваем лого на мобильных */
-    
-    /* Оптимизируем главный экран */
-    .hero { min-height: 60vh; background-attachment: scroll; } /* Отключаем "прилипающий" фон */
+    header .contacts-header { display: none; } 
+    header .logo { font-size: 3rem; }
+    .hero { min-height: 60vh; background-attachment: scroll; }
     .hero h1 { font-size: 3.5rem; }
-
-    /* Делаем галерею в 2 колонки */
     .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
     .gallery-item .item-info { padding: 15px; }
     .gallery-item h3 { font-size: 1.1rem; }
-
-    /* Показываем контакты в футере */
     .footer-contacts { display: block; margin-bottom: 25px; font-size: 1rem; }
-
-    /* Выравниваем иконки соц.сетей */
     .social-icons { display: flex; justify-content: center; gap: 25px; }
     .social-icons a { margin: 0; }
-
-    /* Устанавливаем базовый размер для основного текста */
     .item-info p, .about-section p { font-size: 1rem; }
 }
