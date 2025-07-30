@@ -1,9 +1,8 @@
 backend:
   name: git-gateway
-  branch: main # или master, в зависимости от названия вашей основной ветки в GitHub
+  branch: main
 
-media_folder: "images" # Куда загружать картинки
-public_folder: "/images" # Как сайт будет их видеть
+media_folder: "images" 
 
 collections:
   - name: "content"
@@ -25,14 +24,12 @@ collections:
           - { label: "Коллекция", name: "collection", widget: "object", fields: [
               { label: "Заголовок секции", name: "title", widget: "string" },
               
-              # --- НАЧАЛО ИЗМЕНЕНИЙ ---
               { label: "Товары", name: "items", widget: "list", fields: [
-                  { label: "ID", name: "id", widget: "hidden", default: ""},      # ДОБАВЛЕНО: Для автоматического ID
-                  { label: "Фотография", name: "image", widget: "image" },      # ПЕРЕМЕЩЕНО И ИСПРАВЛЕНО
+                  { label: "ID", name: "id", widget: "uuid" , hide: true },      
+                  { label: "Фотография", name: "image", widget: "image" },
                   { label: "Название товара", name: "name", widget: "string" },
                   { label: "Описание", name: "description", widget: "text" }
                 ]}
-              # --- КОНЕЦ ИЗМЕНЕНИЙ ---
 
             ]}
           - { label: "О нас", name: "about", widget: "object", fields: [
