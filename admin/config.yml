@@ -24,11 +24,16 @@ collections:
             ]}
           - { label: "Коллекция", name: "collection", widget: "object", fields: [
               { label: "Заголовок секции", name: "title", widget: "string" },
+              
+              # --- НАЧАЛО ИЗМЕНЕНИЙ ---
               { label: "Товары", name: "items", widget: "list", fields: [
+                  { label: "ID", name: "id", widget: "hidden", default: ""},      # ДОБАВЛЕНО: Для автоматического ID
+                  { label: "Фотография", name: "image", widget: "image" },      # ПЕРЕМЕЩЕНО И ИСПРАВЛЕНО
                   { label: "Название товара", name: "name", widget: "string" },
-                  { label: "Описание", name: "description", widget: "text" },
-                  { label: "Фотография", name: "image", widget: "image" }
+                  { label: "Описание", name: "description", widget: "text" }
                 ]}
+              # --- КОНЕЦ ИЗМЕНЕНИЙ ---
+
             ]}
           - { label: "О нас", name: "about", widget: "object", fields: [
               { label: "Заголовок", name: "title", widget: "string" },
