@@ -61,10 +61,12 @@
                 camera-controls
                 auto-rotate
                 ar
-                max-polar-angle="Infinity"
+                interpolation-decay="10000"
                 min-camera-orbit="auto"
                 max-camera-orbit="auto"
-                interpolation-decay="10000" style="width: 100%; height: 400px; background-color: var(--secondary-bg); border-radius: 10px;">
+                min-polar-angle="-Infinity"
+                max-polar-angle="Infinity"
+                style="width: 100%; height: 400px; background-color: var(--secondary-bg); border-radius: 10px;">
             </model-viewer>
         </section>
 
