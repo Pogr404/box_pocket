@@ -1,0 +1,44 @@
+backend:
+  name: git-gateway
+  branch: main # или master, в зависимости от названия вашей основной ветки в GitHub
+
+media_folder: "images" # Куда загружать картинки
+public_folder: "/images" # Как сайт будет их видеть
+
+collections:
+  - name: "content"
+    label: "Контент страниц"
+    files:
+      - file: "config.json"
+        label: "Основной контент сайта"
+        name: "config"
+        fields:
+          - { label: "Шапка", name: "header", widget: "object", fields: [
+              { label: "Название (Логотип)", name: "logoText", widget: "string" },
+              { label: "Слоган", name: "slogan", widget: "string" }
+            ]}
+          - { label: "Главный экран", name: "hero", widget: "object", fields: [
+              { label: "Главный заголовок", name: "headline", widget: "string" },
+              { label: "Текст на кнопке", name: "callToAction", widget: "string" },
+              { label: "Фоновое изображение", name: "backgroundImage", widget: "image" }
+            ]}
+          - { label: "Коллекция", name: "collection", widget: "object", fields: [
+              { label: "Заголовок секции", name: "title", widget: "string" },
+              { label: "Товары", name: "items", widget: "list", fields: [
+                  { label: "Название товара", name: "name", widget: "string" },
+                  { label: "Описание", name: "description", widget: "text" },
+                  { label: "Фотография", name: "image", widget: "image" }
+                ]}
+            ]}
+          - { label: "О нас", name: "about", widget: "object", fields: [
+              { label: "Заголовок", name: "title", widget: "string" },
+              { label: "Текст", name: "text", widget: "markdown" }
+            ]}
+          - { label: "Контакты", name: "contact", widget: "object", fields: [
+              { label: "Заголовок", name: "title", widget: "string" },
+              { label: "Адрес", name: "address", widget: "string" },
+              { label: "Текст на кнопке формы", name: "formButtonText", widget: "string" }
+            ]}
+          - { label: "Футер", name: "footer", widget: "object", fields: [
+              { label: "Копирайт", name: "copyright", widget: "string" }
+            ]}
