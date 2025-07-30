@@ -3,29 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- КОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ТЕМЫ ---
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
-
-    // Функция для применения темы
-    const applyTheme = (theme) => {
-        if (theme === 'dark') {
-            body.classList.add('dark-mode');
-        } else {
-            body.classList.remove('dark-mode');
-        }
-    };
-
-    // Проверяем, есть ли сохраненная тема в localStorage
+    const applyTheme = (theme) => { if (theme === 'dark') { body.classList.add('dark-mode'); } else { body.classList.remove('dark-mode'); } };
     const savedTheme = localStorage.getItem('theme') || 'light';
     applyTheme(savedTheme);
-
-    // Слушаем клик по кнопке
     themeToggle.addEventListener('click', () => {
-        const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
+        const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
         applyTheme(newTheme);
-        localStorage.setItem('theme', newTheme); // Сохраняем выбор
+        localStorage.setItem('theme', newTheme);
     });
-
 
     // --- КОД ДЛЯ ГИРОСКОПИЧЕСКОГО ПАРАЛЛАКСА ---
     function initGyroParallax() {
@@ -79,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => { console.error("Could not load config file:", error); document.body.innerHTML = '<h1 style="text-align:center; margin-top: 50px;">Ошибка загрузки конфигурации сайта.</h1>'; });
 });
 
-// --- ОСТАЛЬНЫЕ ФУНКЦИИ (УВЕДОМЛЕНИЯ, ФОРМА И Т.Д.) ---
+// --- ОСТАЛЬНЫЕ ФУНКЦИИ ---
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -88,6 +73,7 @@ function showNotification(message, type = 'success') {
     setTimeout(() => { notification.classList.add('show'); }, 100);
     setTimeout(() => { notification.classList.remove('show'); setTimeout(() => { document.body.removeChild(notification); }, 500); }, 4000);
 }
+
 function handleFormSubmit(event) {
     event.preventDefault();
     const form = event.target;
@@ -98,10 +84,11 @@ function handleFormSubmit(event) {
     const publicKey = 'jJ6WclhTKvXEfYgyb';
     button.textContent = 'Отправка...'; button.disabled = true;
     emailjs.sendForm(serviceID, templateID, form, publicKey)
-        .then(() => { showNotification('Запрос принят, спасибо!'); form.reset(); }, 
+        .then(() => { showNotification('Запрос принят, спасибо!'); form.reset(); },
               (err) => { showNotification('Произошла ошибка. Попробуйте снова.', 'error'); console.error('EmailJS error:', JSON.stringify(err)); })
         .finally(() => { button.textContent = originalButtonText; button.disabled = false; });
 }
+
 function buildWebsite(data) {
     document.title = data.header.logoText;
     document.getElementById('logo-text').textContent = data.header.logoText;
@@ -123,13 +110,33 @@ function buildWebsite(data) {
     document.getElementById('hero-cta').textContent = data.hero.callToAction;
     document.getElementById('collection-title').textContent = data.collection.title;
     const galleryContainer = document.getElementById('gallery-container');
-    galleryContainer.innerHTML = ''; 
-    data.collection.items.forEach(item => {
+    galleryContainer.innerHTML = '';
+
+    // --- НАЧАЛО ИСПРАВЛЕНИЙ ---
+    data.collection.items.forEach((item, index) => {
+        // Если у товара нет ID, присваиваем ему временный ID на основе его позиции
+        if (!item.id) {
+            item.id = `temp_${index}`;
+        }
+
+        // "Умная" обработка пути к картинке
+        let imagePath = item.image;
+        if (imagePath.includes('/')) {
+            // Если путь уже полный (например, "/images/image4.jpg"), убираем лишний слэш в начале
+            imagePath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+        } else {
+            // Если указано только имя файла (например, "image1.jpg"), добавляем папку
+            imagePath = `images/${imagePath}`;
+        }
+
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
-        galleryItem.innerHTML = `<img src="images/${item.image}" alt="${item.name}"><div class="item-info"><h3>${item.name}</h3><p>${item.description}</p></div>`;
+        // Используем исправленный imagePath
+        galleryItem.innerHTML = `<img src="${imagePath}" alt="${item.name}"><div class="item-info"><h3>${item.name}</h3><p>${item.description}</p></div>`;
         galleryContainer.appendChild(galleryItem);
     });
+    // --- КОНЕЦ ИСПРАВЛЕНИЙ ---
+
     document.getElementById('about-title').textContent = data.about.title;
     document.getElementById('about-text').textContent = data.about.text;
     document.getElementById('contact-title').textContent = data.contact.title;
