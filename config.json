@@ -23,8 +23,7 @@
         "characteristics": {
           "Вместимость": "Бесконечные сомнения",
           "Материал": "Прессованная меланхолия"
-        },
-        "model_glb": "model/korobka.glb"
+        }
       },
       {
         "id": 2,
@@ -152,9 +151,5 @@
       "pinterest_url": "https://pinterest.com/",
       "facebook_url": "https://facebook.com/"
     }
-  },
-  "model": {
-    "title": "THE BOXES",
-    "text": "......"
   }
 }
