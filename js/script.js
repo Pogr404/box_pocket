@@ -28,25 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    /* === 2. АНИМАЦИЯ ШАПКИ ПРИ СКРОЛЛЕ (ДЛЯ МОБИЛЬНЫХ) === */
-    const headerForScroll = document.querySelector('header');
-    let isHeaderCompact = false; // Переменная для хранения состояния шапки
-
-    window.addEventListener('scroll', () => {
-        // Работает только на мобильных
-        if (window.innerWidth <= 768) {
-            // Условие для сворачивания
-            if (window.scrollY > 20 && !isHeaderCompact) {
-                isHeaderCompact = true; // Запоминаем, что шапка свернута
-                headerForScroll.classList.add('is-scrolled');
-            } 
-            // Условие для разворачивания (только в самом верху)
-            else if (window.scrollY < 10 && isHeaderCompact) {
-                isHeaderCompact = false; // Запоминаем, что шапка развернута
-                headerForScroll.classList.remove('is-scrolled');
-            }
-        }
-    });
 
 
     /* === 3. ГИРОСКОПИЧЕСКИЙ ПАРАЛЛАКС (ДЛЯ ТЕЛЕФОНОВ) === */
