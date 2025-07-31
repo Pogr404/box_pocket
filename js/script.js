@@ -1,103 +1,6 @@
 // Ждем, пока вся HTML-структура страницы будет готова
 document.addEventListener('DOMContentLoaded', () => {
-// --- КОД ДЛЯ ПЛАВНОГО СВОРАЧИВАНИЯ ШАПКИ ПРИ ПРОКРУТКЕ ---
-const header = document.querySelector('header');
-const slogan = header.querySelector('.slogan');
-const headerRight = header.querySelector('.header-right');
-
-// Диапазон прокрутки в пикселях, в котором будет происходить анимация
-const animationScrollRange = 100; 
-
-window.addEventListener('scroll', () => {
-   // --- КОД ДЛЯ ПЛАВНОГО СВОРАЧИВАНИЯ ШАПКИ ПРИ ПРОКРУТКЕ (ОПТИМИЗИРОВАННЫЙ) ---
-const header = document.querySelector('header');
-const slogan = header.querySelector('.slogan');
-const headerRight = header.querySelector('.header-right');
-
-const animationScrollRange = 100;
-let ticking = false; // "Затвор", который предотвращает лишние вызовы
-
-function updateHeaderOnScroll() {
-    // Эта логика работает только на мобильных устройствах
-    if (window.innerWidth > 768) {
-        // На ПК сбрасываем стили
-        header.style.paddingTop = '';
-        header.style.paddingBottom = '';
-        header.style.gap = '';
-        slogan.style.opacity = '';
-        slogan.style.maxHeight = '';
-        slogan.style.marginTop = '';
-        headerRight.style.opacity = '';
-        headerRight.style.maxHeight = '';
-        
-        // В конце говорим, что мы закончили
-        ticking = false;
-        return;
-    }
-    
-    const progress = Math.min(1, window.scrollY / animationScrollRange);
-    const reverseProgress = 1 - progress;
-
-    // 1. Анимируем отступы в шапке
-    header.style.paddingTop = `${10 + 10 * reverseProgress}px`;
-    header.style.paddingBottom = `${10 + 10 * reverseProgress}px`;
-    header.style.gap = `${20 * reverseProgress}px`;
-
-    // 2. Анимируем прозрачность
-    slogan.style.opacity = reverseProgress;
-    headerRight.style.opacity = reverseProgress;
-
-    // 3. Анимируем максимальную высоту, чтобы блок схлопывался
-    slogan.style.maxHeight = `${30 * reverseProgress}px`;
-    slogan.style.marginTop = `${5 * reverseProgress}px`; 
-    headerRight.style.maxHeight = `${50 * reverseProgress}px`;
-    
-    // 4. Прячем элементы от кликов, когда они невидимы
-    if (progress > 0.9) {
-        slogan.style.pointerEvents = 'none';
-        headerRight.style.pointerEvents = 'none';
-    } else {
-        slogan.style.pointerEvents = 'auto';
-        headerRight.style.pointerEvents = 'auto';
-    }
-
-    // В конце говорим, что мы закончили и готовы к следующему кадру
-    ticking = false;
-}
-
-window.addEventListener('scroll', () => {
-    if (!ticking) {
-        window.requestAnimationFrame(updateHeaderOnScroll);
-        ticking = true;
-    }
-});
-
-    const progress = Math.min(1, window.scrollY / animationScrollRange);
-    const reverseProgress = 1 - progress; // Значение от 1.0 до 0.0
-
-    // 1. Плавно уменьшаем отступы в шапке
-    header.style.paddingTop = `${10 + 10 * reverseProgress}px`;
-    header.style.paddingBottom = `${10 + 10 * reverseProgress}px`;
-    header.style.gap = `${20 * reverseProgress}px`;
-
-    // 2. Анимируем прозрачность
-    slogan.style.opacity = reverseProgress;
-    headerRight.style.opacity = reverseProgress;
-
-    // 3. Анимируем МАКСИМАЛЬНУЮ ВЫСОТУ, чтобы блок физически схлопывался
-    slogan.style.maxHeight = `${30 * reverseProgress}px`; // Предполагаем, что высота слогана не более 30px
-    slogan.style.marginTop = `${5 * reverseProgress}px`; 
-    headerRight.style.maxHeight = `${50 * reverseProgress}px`; // Предполагаем, что высота правой части не более 50px
-    
-    // 4. Прячем элементы от кликов, когда они невидимы
-    if (progress > 0.9) {
-        slogan.style.pointerEvents = 'none';
-        headerRight.style.pointerEvents = 'none';
-    } else {
-        slogan.style.pointerEvents = 'auto';
-        headerRight.style.pointerEvents = 'auto';
-    }
-});
+    // --- КОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ТЕМ ---
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
     const themes = ['light', 'dark', 'glass'];
@@ -116,6 +19,27 @@ window.addEventListener('scroll', () => {
         localStorage.setItem('theme', newTheme);
         currentTheme = newTheme;
     });
+
+    // --- КОД ДЛЯ СВОРАЧИВАНИЯ ШАПКИ (Intersection Observer - САМЫЙ ПЛАВНЫЙ) ---
+    const header = document.querySelector('header');
+    // Создаем невидимый элемент-триггер сразу после шапки
+    const trigger = document.createElement('div');
+    trigger.style.position = 'absolute';
+    trigger.style.top = '50px'; // Высота, после которой шапка сжимается
+    header.after(trigger);
+
+    // Настраиваем "наблюдатель"
+    const observer = new IntersectionObserver((entries) => {
+        if (!entries[0].isIntersecting) {
+            header.classList.add('is-scrolled'); // Скроллим вниз
+        } else {
+            header.classList.remove('is-scrolled'); // Вернулись наверх
+        }
+    }, { threshold: [0] }); // Срабатывает, как только триггер уходит из вида
+
+    // Начинаем наблюдать за триггером
+    observer.observe(trigger);
+    
 
     // --- КОД ДЛЯ ГИРОСКОПИЧЕСКОГО ПАРАЛЛАКСА ---
     function initGyroParallax() {

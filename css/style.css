@@ -102,43 +102,57 @@ a {
    3. ШАПКА САЙТА (HEADER)
    ========================================================================== */
 header { 
-    /* --- Новые свойства для "прилипания" --- */
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    /* --- Конец новых свойств --- */
-    transition: background 0.3s, border 0.3s, padding 0.4s ease, height 0.4s ease;
-
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
     padding: 20px; 
     margin-bottom: 25px;
     border-radius: var(--main-border-radius);
-    transition: background 0.3s, border 0.3s;
+
+    /* Свойства для "прилипания" */
+    position: sticky;
+    top: 15px; /* <-- Небольшой отступ от верха экрана */
+    z-index: 1000;
+
+    /* Плавные переходы для фона и тени */
+    transition: background-color 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
 }
-.header-right {
-    display: flex;
+
+.header-right { 
+    display: flex; 
     align-items: center; 
     gap: 20px;   
-    transition: opacity 0.3s, max-height 0.4s ease-out, margin-top 0.4s ease-out; /* <-- ОБНОВЛЕНО */
-    overflow: hidden; /* <-- ДОБАВЛЕНО */
-     }
-.header-left { text-align: left; }
-.contacts-header { text-align: right; margin-top: 0; }
+    /* Плавный переход для исчезновения */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.header-left { 
+    text-align: left; 
+}
+
+.contacts-header { 
+    text-align: right; 
+    margin-top: 0; 
+}
+
 header .logo { 
-    font-family: var(--heading-font);
-    font-size: 2.5rem; /* <-- Размер названия фирмы на ПК */
+    font-size: 2.5rem; 
     color: var(--heading-color); 
 }
+
 header .slogan { 
-    font-size: 1rem; /* <-- Размер слогана */
+    font-size: 1rem;
     color: #999; 
     margin-top: 5px; 
-    transition: opacity 0.3s, max-height 0.4s ease-out, margin-top 0.4s ease-out; /* <-- ОБНОВЛЕНО */
-    overflow: hidden; /* <-- ДОБАВЛЕНО */
+    /* Плавный переход для исчезновения */
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
-header .contacts-header a { color: var(--text-color); margin: 0 5px; }
+
+header .contacts-header a { 
+    color: var(--text-color); 
+    margin: 0 5px; 
+}
+
 #theme-toggle { 
     background: none; 
     border: 1px solid var(--border-color); 
@@ -149,13 +163,27 @@ header .contacts-header a { color: var(--text-color); margin: 0 5px; }
     display: flex; 
     align-items: center; 
     justify-content: center;
-    transition: opacity 0.3s, transform 0.3s; /* <-- ДОБАВЬТЕ ЭТУ СТРОКУ */
 }
-#theme-toggle svg { width: 100%; height: 100%; stroke: var(--text-color); }
-.sun-icon, .moon-icon, .glass-icon { display: none; }
-body:not(.dark-mode):not(.glass-mode) .sun-icon { display: block; }
-.dark-mode .moon-icon { display: block; }
-.glass-mode .glass-icon { display: block; }
+
+#theme-toggle svg { 
+    width: 100%; 
+    height: 100%; 
+    stroke: var(--text-color); 
+}
+
+.sun-icon, .moon-icon, .glass-icon { 
+    display: none; 
+}
+
+body:not(.dark-mode):not(.glass-mode) .sun-icon { 
+    display: block; 
+}
+.dark-mode .moon-icon { 
+    display: block; 
+}
+.glass-mode .glass-icon { 
+    display: block; 
+}
 
 /* ==========================================================================
    4. ГЛАВНЫЙ ЭКРАН (HERO)
@@ -550,12 +578,48 @@ footer {
    10. АДАПТИВНОСТЬ (СТИЛИ ДЛЯ МОБИЛЬНЫХ ТЕЛЕФОНОВ)
    ========================================================================== */
 @media (max-width: 768px) {
+    /* --- Общие размеры --- */
     h2 { font-size: 2rem; }
-    header { flex-direction: column; gap: 20px; }
+
+    /* --- Шапка --- */
+    header { 
+        flex-direction: column; 
+        gap: 15px; 
+    }
     .header-left { text-align: center; order: 1; } 
-    .header-right { order: 2; }
+    .header-right { 
+        order: 2;
+        /* Готовим блок к анимации высоты */
+        overflow: hidden;
+        transition: max-height 0.4s ease-out, opacity 0.3s;
+        max-height: 50px; /* Изначальная высота (с запасом) */
+    }
+    header .slogan {
+        /* Готовим слоган к анимации высоты */
+        overflow: hidden;
+        transition: max-height 0.4s ease-out, opacity 0.3s, margin-top 0.4s ease-out;
+        max-height: 30px; /* Изначальная высота (с запасом) */
+    }
     header .contacts-header { display: none; } 
     header .logo { font-size: 3rem; }
+
+    /* --- Стили для "свернутой" шапки при прокрутке --- */
+    header.is-scrolled {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        gap: 0;
+        background-color: var(--secondary-bg);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    header.is-scrolled .slogan,
+    header.is-scrolled .header-right {
+        opacity: 0;
+        max-height: 0; /* <-- Схлопываем высоту до нуля */
+        margin-top: 0; /* Убираем отступ у слогана */
+        pointer-events: none;
+    }
+    
+    /* --- Остальные секции --- */
     .hero { min-height: 60vh; background-attachment: scroll; }
     .hero h1 { font-size: 3.5rem; }
     .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
@@ -565,14 +629,8 @@ footer {
     .social-icons { display: flex; justify-content: center; gap: 25px; }
     .social-icons a { margin: 0; }
     .item-info p, .about-section p { font-size: 1rem; }
+    
+    /* --- Модальное окно --- */
     .modal-body { flex-direction: column; }
     .modal-main-image { height: 250px; }
 }
-
-/* Скрываем кнопку темы при прокрутке на мобильных */
-#theme-toggle.is-hidden {
-    opacity: 0;
-    transform: translateY(-20px);
-    pointer-events: none; /* <-- Делает невидимую кнопку некликабельной */
-}
-
