@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. ОБЩИЕ НАСТРОЙКИ И ПЕРЕМЕННЫЕ
+   1. ГЛАВНЫЕ НАСТРОЙКИ (ЦВЕТА И ШРИФТЫ)
    ========================================================================== */
 :root {
     /* --- Светлая тема (по умолчанию) --- */
@@ -10,9 +10,12 @@
     --border-color: #eee;
     --accent-color: #a07d5a;
 
+    /* --- Шрифты --- */
     --primary-font: 'Montserrat', sans-serif;
     --heading-font: 'Oswald', sans-serif;
-    --main-border-radius: 25px; /* <-- НОВИНКА: Единый радиус скругления */
+    
+    /* --- Дизайн --- */
+    --main-border-radius: 25px; /* <-- ГЛАВНЫЙ ПАРАМЕТР СКРУГЛЕНИЯ ДЛЯ ВСЕХ БЛОКОВ */
 }
 
 /* --- Темная тема --- */
@@ -48,22 +51,19 @@ body {
 }
 
 #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; mix-blend-mode: difference; }
-html, body, a, button, input[type="text"], input[type="email"], textarea { cursor: url('../images/box.png'), auto; }
+html, body, a, button, input, textarea { cursor: url('../images/box.png'), auto; }
 a, button { cursor: url('../images/box2.png'), auto; }
 input[type="text"], input[type="email"], textarea { cursor: url('../images/box2.png'), auto; }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 h1, h2 { font-family: var(--heading-font); color: var(--heading-color); text-align: center; margin-bottom: 40px; }
 h2 { font-size: 2.5rem; }
-
-/* ОБЩИЙ СТИЛЬ ДЛЯ ВСЕХ СЕКЦИЙ, КОТОРЫЙ НЕ МЕНЯЕТСЯ */
 section {
-    padding: 60px 0; /* Уменьшили вертикальные отступы для всех */
-    margin-bottom: 25px; /* Добавили внешний отступ для всех */
-    border-radius: var(--main-border-radius); /* Применяем единое скругление */
-    transition: background 0.3s, border 0.3s; /* Плавный переход */
+    padding: 60px 20px; /* Добавили боковые отступы для контента внутри */
+    margin-bottom: 25px;
+    border-radius: var(--main-border-radius);
+    transition: background 0.3s, border 0.3s;
 }
-
 a { color: var(--accent-color); text-decoration: none; }
 
 
@@ -75,14 +75,14 @@ header {
     justify-content: space-between; 
     align-items: center; 
     padding: 20px; 
-    margin-bottom: 25px; /* Такой же отступ, как у секций */
+    margin-bottom: 25px;
     border-radius: var(--main-border-radius);
     transition: background 0.3s, border 0.3s;
 }
 .header-right { display: flex; align-items: center; gap: 20px; }
 .header-left { text-align: left; }
 .contacts-header { text-align: right; margin-top: 0; }
-header .logo { font-family: var(--heading-font); font-size: 2.5rem; color: var(--heading-color); }
+header .logo { font-size: 2.5rem; color: var(--heading-color); }
 header .slogan { font-size: 1rem; color: #999; margin-top: 5px; }
 header .contacts-header a { color: var(--text-color); margin: 0 5px; }
 #theme-toggle { background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; padding: 5px; display: flex; align-items: center; justify-content: center; }
@@ -94,10 +94,22 @@ body:not(.dark-mode):not(.glass-mode) .sun-icon { display: block; }
 
 
 /* ==========================================================================
-   4. ГЛАВНЫЙ ЭКРАН (HERO) - он без фона, поэтому его не трогаем
+   4. ГЛАВНЫЙ ЭКРАН (HERO)
    ========================================================================== */
-.hero { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white; position: relative; overflow: hidden; padding: 60px 20px; margin-bottom: 25px; }
-.hero-background { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; z-index: 1; background-image: inherit; background-size: cover; background-position: center; filter: blur(8px) brightness(0.7); transition: transform 0.2s ease-out; }
+.hero { 
+    min-height: 80vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    color: white; 
+    position: relative; 
+    overflow: hidden; 
+    padding: 60px 20px; 
+    margin-bottom: 25px;
+    border-radius: var(--main-border-radius); /* Добавили скругление и для этого блока */
+}
+.hero-background { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; background-image: inherit; background-size: cover; background-position: center; filter: blur(8px) brightness(0.7); transition: transform 0.2s ease-out; border-radius: inherit; }
 .hero-content { position: relative; z-index: 2; max-width: 900px; }
 .hero h1 { font-size: 5.5rem; color: white; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); line-height: 1.2; }
 .cta-button { display: inline-block; padding: 12px 25px; font-size: 0.9rem; letter-spacing: 0.5px; background-color: var(--accent-color); color: white; border-radius: 5px; text-transform: uppercase; font-weight: 500; transition: background-color 0.3s ease; text-decoration: none; }
@@ -119,7 +131,7 @@ body:not(.glass-mode) .contact-section {
 }
 body:not(.glass-mode) .gallery-item {
     background-color: var(--primary-bg);
-    border-radius: 5px; /* Обычные углы для этих тем */
+    border-radius: var(--main-border-radius); /* ИСПРАВЛЕНО: Теперь используется общая переменная */
 }
 
 /* Стеклянная тема */
@@ -135,11 +147,11 @@ body:not(.glass-mode) .gallery-item {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 .glass-mode h2, .glass-mode p, .glass-mode .item-info h3, .glass-mode .item-info p {
-    text-shadow: 0px 1px 3px rgba(0,0,0,0.1); /* Тень для читаемости */
+    text-shadow: 0px 1px 3px rgba(0,0,0,0.1);
 }
 .glass-mode .gallery-item {
     background: rgba(255, 255, 255, 0.5);
-    border-radius: var(--main-border-radius); /* Единое скругление */
+    border-radius: var(--main-border-radius);
     border: 1px solid rgba(255, 255, 255, 0.6);
 }
 .glass-mode #contact-form input, .glass-mode #contact-form textarea {
@@ -163,15 +175,12 @@ body:not(.glass-mode) .gallery-item {
 .dark-mode .gallery-item:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 .gallery-item img { width: 100%; height: 250px; object-fit: cover; display: block; }
 .item-info { padding: 25px; }
-.item-info h3 { font-family: var(--heading-font); font-size: 1.5rem; color: var(--heading-color); margin-bottom: 10px; }
+.item-info h3 { font-size: 1.5rem; color: var(--heading-color); margin-bottom: 10px; }
 .item-info p { font-size: 0.95rem; }
 
 .about-section p { font-size: 1.1rem; }
-.model-section h2,
-.model-section p {
-    text-align: center; /* <-- ЦЕНТРИРУЕМ ЗАГОЛОВК И ТЕКСТ */
-    margin-bottom: 30px; 
-}
+.model-section h2, .model-section p { text-align: center; }
+.model-section p { margin-bottom: 30px; }
 
 .contact-details { text-align: center; margin-bottom: 40px; font-size: 1.1rem; }
 .contact-details a { color: var(--text-color); text-decoration: none; }
