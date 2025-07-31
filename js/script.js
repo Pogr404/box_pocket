@@ -9,6 +9,15 @@ const headerRight = header.querySelector('.header-right');
 const animationScrollRange = 100; 
 
 window.addEventListener('scroll', () => {
+   // --- КОД ДЛЯ ПЛАВНОГО СВОРАЧИВАНИЯ ШАПКИ ПРИ ПРОКРУТКЕ (ОПТИМИЗИРОВАННЫЙ) ---
+const header = document.querySelector('header');
+const slogan = header.querySelector('.slogan');
+const headerRight = header.querySelector('.header-right');
+
+const animationScrollRange = 100;
+let ticking = false; // "Затвор", который предотвращает лишние вызовы
+
+function updateHeaderOnScroll() {
     // Эта логика работает только на мобильных устройствах
     if (window.innerWidth > 768) {
         // На ПК сбрасываем стили
@@ -20,8 +29,48 @@ window.addEventListener('scroll', () => {
         slogan.style.marginTop = '';
         headerRight.style.opacity = '';
         headerRight.style.maxHeight = '';
+        
+        // В конце говорим, что мы закончили
+        ticking = false;
         return;
     }
+    
+    const progress = Math.min(1, window.scrollY / animationScrollRange);
+    const reverseProgress = 1 - progress;
+
+    // 1. Анимируем отступы в шапке
+    header.style.paddingTop = `${10 + 10 * reverseProgress}px`;
+    header.style.paddingBottom = `${10 + 10 * reverseProgress}px`;
+    header.style.gap = `${20 * reverseProgress}px`;
+
+    // 2. Анимируем прозрачность
+    slogan.style.opacity = reverseProgress;
+    headerRight.style.opacity = reverseProgress;
+
+    // 3. Анимируем максимальную высоту, чтобы блок схлопывался
+    slogan.style.maxHeight = `${30 * reverseProgress}px`;
+    slogan.style.marginTop = `${5 * reverseProgress}px`; 
+    headerRight.style.maxHeight = `${50 * reverseProgress}px`;
+    
+    // 4. Прячем элементы от кликов, когда они невидимы
+    if (progress > 0.9) {
+        slogan.style.pointerEvents = 'none';
+        headerRight.style.pointerEvents = 'none';
+    } else {
+        slogan.style.pointerEvents = 'auto';
+        headerRight.style.pointerEvents = 'auto';
+    }
+
+    // В конце говорим, что мы закончили и готовы к следующему кадру
+    ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        window.requestAnimationFrame(updateHeaderOnScroll);
+        ticking = true;
+    }
+});
 
     const progress = Math.min(1, window.scrollY / animationScrollRange);
     const reverseProgress = 1 - progress; // Значение от 1.0 до 0.0
