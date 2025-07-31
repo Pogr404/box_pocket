@@ -584,21 +584,15 @@ footer {
     /* --- Шапка --- */
     header { 
         flex-direction: column; 
-        gap: 15px; 
+        gap: 15px;
+        transition: padding 0.4s ease, gap 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease;
     }
     .header-left { text-align: center; order: 1; } 
-    .header-right { 
-        order: 2;
-        /* Готовим блок к анимации высоты */
+    .header-right, header .slogan {
+        /* Готовим элементы к анимации */
+        transition: opacity 0.3s, max-height 0.4s ease-out, margin-top 0.4s ease-out;
         overflow: hidden;
-        transition: max-height 0.4s ease-out, opacity 0.3s;
-        max-height: 50px; /* Изначальная высота (с запасом) */
-    }
-    header .slogan {
-        /* Готовим слоган к анимации высоты */
-        overflow: hidden;
-        transition: max-height 0.4s ease-out, opacity 0.3s, margin-top 0.4s ease-out;
-        max-height: 30px; /* Изначальная высота (с запасом) */
+        max-height: 50px; /* Изначальная высота с запасом */
     }
     header .contacts-header { display: none; } 
     header .logo { font-size: 3rem; }
@@ -614,8 +608,8 @@ footer {
     header.is-scrolled .slogan,
     header.is-scrolled .header-right {
         opacity: 0;
-        max-height: 0; /* <-- Схлопываем высоту до нуля */
-        margin-top: 0; /* Убираем отступ у слогана */
+        max-height: 0; /* Схлопываем высоту до нуля */
+        margin-top: 0;
         pointer-events: none;
     }
     

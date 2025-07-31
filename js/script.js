@@ -1,47 +1,55 @@
-// Ждем, пока вся HTML-структура страницы будет готова
+/* ==========================================================================
+   ОСНОВНОЙ СКРИПТ (ЗАПУСКАЕТСЯ ПОСЛЕ ЗАГРУЗКИ СТРАНИЦЫ)
+   ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // --- КОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ТЕМ ---
+
+    /* === 1. ПЕРЕКЛЮЧАТЕЛЬ ТЕМ (СВЕТЛАЯ/ТЕМНАЯ/СТЕКЛО) === */
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
     const themes = ['light', 'dark', 'glass'];
+    
     const applyTheme = (theme) => {
         body.classList.remove('dark-mode', 'glass-mode');
         if (theme === 'dark') { body.classList.add('dark-mode'); } 
         else if (theme === 'glass') { body.classList.add('glass-mode'); }
     };
+
     let currentTheme = localStorage.getItem('theme') || 'light';
     applyTheme(currentTheme);
+
     themeToggle.addEventListener('click', () => {
         const currentIndex = themes.indexOf(currentTheme);
         const nextIndex = (currentIndex + 1) % themes.length;
         const newTheme = themes[nextIndex];
+        
         applyTheme(newTheme);
         localStorage.setItem('theme', newTheme);
         currentTheme = newTheme;
     });
 
-    // --- КОД ДЛЯ СВОРАЧИВАНИЯ ШАПКИ (Intersection Observer - САМЫЙ ПЛАВНЫЙ) ---
-    const header = document.querySelector('header');
-    // Создаем невидимый элемент-триггер сразу после шапки
-    const trigger = document.createElement('div');
-    trigger.style.position = 'absolute';
-    trigger.style.top = '50px'; // Высота, после которой шапка сжимается
-    header.after(trigger);
 
-    // Настраиваем "наблюдатель"
-    const observer = new IntersectionObserver((entries) => {
-        if (!entries[0].isIntersecting) {
-            header.classList.add('is-scrolled'); // Скроллим вниз
-        } else {
-            header.classList.remove('is-scrolled'); // Вернулись наверх
+    /* === 2. АНИМАЦИЯ ШАПКИ ПРИ СКРОЛЛЕ (ДЛЯ МОБИЛЬНЫХ) === */
+    const headerForScroll = document.querySelector('header');
+    let isHeaderCompact = false; // Переменная для хранения состояния шапки
+
+    window.addEventListener('scroll', () => {
+        // Работает только на мобильных
+        if (window.innerWidth <= 768) {
+            // Условие для сворачивания
+            if (window.scrollY > 20 && !isHeaderCompact) {
+                isHeaderCompact = true; // Запоминаем, что шапка свернута
+                headerForScroll.classList.add('is-scrolled');
+            } 
+            // Условие для разворачивания (только в самом верху)
+            else if (window.scrollY < 10 && isHeaderCompact) {
+                isHeaderCompact = false; // Запоминаем, что шапка развернута
+                headerForScroll.classList.remove('is-scrolled');
+            }
         }
-    }, { threshold: [0] }); // Срабатывает, как только триггер уходит из вида
+    });
 
-    // Начинаем наблюдать за триггером
-    observer.observe(trigger);
-    
 
-    // --- КОД ДЛЯ ГИРОСКОПИЧЕСКОГО ПАРАЛЛАКСА ---
+    /* === 3. ГИРОСКОПИЧЕСКИЙ ПАРАЛЛАКС (ДЛЯ ТЕЛЕФОНОВ) === */
     function initGyroParallax() {
         const bg = document.querySelector('.hero-background');
         if (!bg) return;
@@ -65,7 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initGyroParallax();
 
-    // --- КОД ДЛЯ ЭФФЕКТА ПАДАЮЩИХ КОРОБОЧЕК ---
+
+    /* === 4. ЭФФЕКТ ПАДАЮЩИХ КОРОБОЧЕК ЗА КУРСОРОМ === */
     let canCreateParticle = true;
     document.addEventListener('mousemove', function(e) {
         if (!canCreateParticle) return;
@@ -85,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         particle.addEventListener('animationend', () => { particle.remove(); });
     }
 
-    // --- ЗАГРУЗКА ДАННЫХ ИЗ CONFIG.JSON ---
+
+    /* === 5. ЗАГРУЗКА ДАННЫХ И ПОСТРОЕНИЕ САЙТА === */
     const configPath = 'config.json';
     fetch(configPath)
         .then(response => { if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); } return response.json(); })
@@ -94,7 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// --- ФУНКЦИИ УВЕДОМЛЕНИЙ И ОТПРАВКИ ФОРМЫ ---
+/* ==========================================================================
+   ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (УВЕДОМЛЕНИЯ, ФОРМА, ГАЛЕРЕЯ)
+   ========================================================================== */
+
+// --- ФУНКЦИЯ ДЛЯ ПОКАЗА УВЕДОМЛЕНИЙ ---
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -103,6 +117,8 @@ function showNotification(message, type = 'success') {
     setTimeout(() => { notification.classList.add('show'); }, 100);
     setTimeout(() => { notification.classList.remove('show'); setTimeout(() => { document.body.removeChild(notification); }, 500); }, 4000);
 }
+
+// --- ФУНКЦИЯ ДЛЯ ОТПРАВКИ ФОРМЫ ЧЕРЕЗ EMAILJS ---
 function handleFormSubmit(event) {
     event.preventDefault();
     const form = event.target;
@@ -118,8 +134,7 @@ function handleFormSubmit(event) {
         .finally(() => { button.textContent = originalButtonText; button.disabled = false; });
 }
 
-
-// --- ОСНОВНАЯ ФУНКЦИЯ ПОСТРОЕНИЯ САЙТА ---
+// --- ГЛАВНАЯ ФУНКЦИЯ, КОТОРАЯ СТРОИТ ВЕСЬ КОНТЕНТ НА СТРАНИЦЕ ---
 function buildWebsite(data) {
     // Заполнение шапки, футера и прочих секций
     document.title = data.header.logoText;
