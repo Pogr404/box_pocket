@@ -12,13 +12,13 @@ if (typeof THREE !== 'undefined') {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     
-    // ОТОДВИНЕМ КАМЕРУ ДАЛЬШЕ, ЧТОБЫ ОБЪЕКТ БЫЛ МЕНЬШЕ
+    // Отодвигаем камеру дальше, чтобы объект был меньше
     camera.position.setZ(10); 
 
     // 2. Создаем простой куб (вместо сложной модели)
-    const geometry = new THREE.BoxGeometry(5, 5, 5); // Задаем размер куба
+    const geometry = new THREE.BoxGeometry(3, 3, 3);
     const material = new THREE.MeshStandardMaterial({ 
-        color: 0xaaaaaa, // Цвет куба (серый)
+        color: 0xaaaaaa,
         roughness: 0.5 
     });
     const box = new THREE.Mesh(geometry, material);

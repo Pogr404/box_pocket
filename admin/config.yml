@@ -23,18 +23,39 @@ collections:
             ]}
           - { label: "Коллекция", name: "collection", widget: "object", fields: [
               { label: "Заголовок секции", name: "title", widget: "string" },
-              
               { label: "Товары", name: "items", widget: "list", fields: [
-                  { label: "ID", name: "id", widget: "uuid" , hide: true },      
-                  { label: "Фотография", name: "image", widget: "image" },
+                  { label: "ID", name: "id", widget: "uuid", hide: true },
                   { label: "Название товара", name: "name", widget: "string" },
-                  { label: "Описание", name: "description", widget: "text" }
+                  { label: "Описание", name: "description", widget: "text" },
+                  { 
+                    label: "3D Модель (.glb)", 
+                    name: "model_glb", 
+                    widget: "file", 
+                    required: false,
+                    media_folder: "model" # Указываем, что 3D модели хранятся в папке /model
+                  },
+                  { 
+                    label: "Фотографии", 
+                    name: "images", 
+                    widget: "image", 
+                    multiple: true, 
+                    media_library: { config: { multiple: true } } 
+                  },
+                  { label: "Характеристики", name: "characteristics", widget: "object", fields: [
+                      { label: "Высота", name: "Высота", widget: "string", required: false },
+                      { label: "Ширина", name: "Ширина", widget: "string", required: false },
+                      { label: "Глубина", name: "Глубина", widget: "string", required: false },
+                      { label: "Материал", name: "Материал", widget: "string", required: false }
+                    ]}
                 ]}
-
             ]}
           - { label: "О нас", name: "about", widget: "object", fields: [
               { label: "Заголовок", name: "title", widget: "string" },
               { label: "Текст", name: "text", widget: "markdown" }
+            ]}
+          - { label: "3D Модель (в панели)", name: "model", widget: "object", fields: [
+              { label: "Заголовок", name: "title", widget: "string" },
+              { label: "Под-заголовок", name: "text", widget: "string" }
             ]}
           - { label: "Контакты", name: "contact", widget: "object", fields: [
               { label: "Заголовок", name: "title", widget: "string" },
