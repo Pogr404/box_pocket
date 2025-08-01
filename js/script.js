@@ -193,7 +193,7 @@ function buildWebsite(data) {
 }
 
 
-// --- ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА (ИСПРАВЛЕНО) ---
+// --- ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА (ИСПРАВЛЕННАЯ ВЕРСИЯ С 3D) ---
 const modalContainer = document.getElementById('modal-container');
 const modalContent = modalContainer.querySelector('.modal-content');
 
@@ -207,23 +207,37 @@ function openModal(itemData) {
         characteristicsHTML += '</ul></div>';
     }
 
+    // --- ОБНОВЛЕННАЯ ЛОГИКА СОЗДАНИЯ ГАЛЕРЕИ ---
+    let mainViewerHTML = '';
+    let thumbnailsHTML = '';
     const has3DModel = itemData.model_glb;
     const hasImages = itemData.images && Array.isArray(itemData.images) && itemData.images.length > 0;
     
-    // По умолчанию всегда показываем ПЕРВОЕ ФОТО
-    const firstImage = hasImages ? normalizeImagePath(itemData.images[0]) : 'images/placeholder.png';
-    let mainViewerHTML = `<img class="modal-main-image" src="${firstImage}" alt="Главное фото товара">`;
+    // По умолчанию показываем 3D-модель, если она есть. Если нет - первое фото.
+    if (has3DModel) {
+        mainViewerHTML = `
+            <model-viewer class="modal-main-image" 
+                src="${itemData.model_glb}"
+                camera-controls
+                auto-rotate
+                ar
+                ar-scale="fixed"
+                alt="3D модель ${itemData.name}">
+            </model-viewer>`;
+    } else if (hasImages) {
+        mainViewerHTML = `<img class="modal-main-image" src="${normalizeImagePath(itemData.images[0])}" alt="Главное фото товара">`;
+    }
 
     // Создаем превью (thumbnails)
-    let thumbnailsHTML = '';
+    if (has3DModel) {
+        thumbnailsHTML += `<div class="thumb-3d active" data-type="3d">3D</div>`;
+    }
     if (hasImages) {
         itemData.images.forEach((imgSrc, index) => {
             const fullImgSrc = normalizeImagePath(imgSrc);
-            thumbnailsHTML += `<img src="${fullImgSrc}" class="${index === 0 ? 'active' : ''}" data-type="image" alt="Миниатюра товара">`;
+            const isActive = !has3DModel && index === 0;
+            thumbnailsHTML += `<img src="${fullImgSrc}" class="${isActive ? 'active' : ''}" data-type="image" alt="Миниатюра товара">`;
         });
-    }
-    if (has3DModel) {
-        thumbnailsHTML += `<div class="thumb-3d" data-type="3d">3D</div>`;
     }
 
     modalContent.innerHTML = `
@@ -243,11 +257,13 @@ function openModal(itemData) {
     
     modalContainer.classList.add('visible');
 
+    // Логика закрытия
     modalContainer.querySelector('.modal-close').addEventListener('click', closeModal);
     modalContainer.addEventListener('click', (e) => {
         if (e.target === modalContainer) { closeModal(); }
     });
 
+    // --- ОБНОВЛЕННАЯ ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ---
     const mainViewerContainer = modalContent.querySelector('#main-viewer-container');
     const allThumbnails = modalContent.querySelectorAll('.modal-thumbnails > *');
 
@@ -259,8 +275,11 @@ function openModal(itemData) {
             if (thumb.dataset.type === '3d') {
                 mainViewerContainer.innerHTML = `
                     <model-viewer class="modal-main-image" 
-                        src="${normalizeImagePath(itemData.model_glb)}"
+                        src="${itemData.model_glb}"
+                        camera-controls
                         auto-rotate
+                        ar
+                        ar-scale="fixed"
                         alt="3D модель ${itemData.name}">
                     </model-viewer>`;
             } else {
