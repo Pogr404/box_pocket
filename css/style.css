@@ -463,6 +463,34 @@ body:not(.glass-mode) .modal-content {
 .modal-main-image {
     border: none; /* Убираем рамку, которая может остаться от <img> */
 }
+/* Стили для 3D-превью в галерее модального окна */
+.thumb-3d {
+    width: 80px;
+    height: 80px;
+    background-color: #eee;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--heading-font);
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    border: 2px solid transparent; /* Добавим рамку для единообразия */
+}
+.dark-mode .thumb-3d {
+    background-color: #444;
+    color: #eee;
+}
+.thumb-3d.active,
+.thumb-3d:hover {
+    opacity: 1;
+}
+/* Стили для 3D-модели в главном окне просмотра */
+.modal-main-image {
+    border: none; /* Убираем рамку, которая может остаться от <img> */
+}
 
 /* ==========================================================================
    7. О НАС, 3D-МОДЕЛЬ, КОНТАКТЫ
