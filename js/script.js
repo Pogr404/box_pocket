@@ -1,36 +1,41 @@
-/* ==========================================================================
-   ОСНОВНОЙ СКРИПТ (ЗАПУСКАЕТСЯ ПОСЛЕ ЗАГРУЗКИ СТРАНИЦЫ)
-   ========================================================================== */
+// Ждем, пока вся HTML-структура страницы будет готова
 document.addEventListener('DOMContentLoaded', () => {
-
-    /* === 1. ПЕРЕКЛЮЧАТЕЛЬ ТЕМ (СВЕТЛАЯ/ТЕМНАЯ/СТЕКЛО) === */
+    // --- КОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ТЕМ ---
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
     const themes = ['light', 'dark', 'glass'];
-    
     const applyTheme = (theme) => {
         body.classList.remove('dark-mode', 'glass-mode');
         if (theme === 'dark') { body.classList.add('dark-mode'); } 
         else if (theme === 'glass') { body.classList.add('glass-mode'); }
     };
-
     let currentTheme = localStorage.getItem('theme') || 'light';
     applyTheme(currentTheme);
-
     themeToggle.addEventListener('click', () => {
         const currentIndex = themes.indexOf(currentTheme);
         const nextIndex = (currentIndex + 1) % themes.length;
         const newTheme = themes[nextIndex];
-        
         applyTheme(newTheme);
         localStorage.setItem('theme', newTheme);
         currentTheme = newTheme;
     });
 
+    // --- КОД ДЛЯ СВОРАЧИВАНИЯ ШАПКИ (Intersection Observer) ---
+    const header = document.querySelector('header');
+    const trigger = document.createElement('div');
+    trigger.style.position = 'absolute';
+    trigger.style.top = '50px';
+    header.after(trigger);
+    const observer = new IntersectionObserver((entries) => {
+        if (!entries[0].isIntersecting) {
+            header.classList.add('is-scrolled');
+        } else {
+            header.classList.remove('is-scrolled');
+        }
+    }, { threshold: [0] });
+    observer.observe(trigger);
 
-
-
-    /* === 3. ГИРОСКОПИЧЕСКИЙ ПАРАЛЛАКС (ДЛЯ ТЕЛЕФОНОВ) === */
+    // --- КОД ДЛЯ ГИРОСКОПИЧЕСКОГО ПАРАЛЛАКСА ---
     function initGyroParallax() {
         const bg = document.querySelector('.hero-background');
         if (!bg) return;
@@ -54,8 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initGyroParallax();
 
-
-    /* === 4. ЭФФЕКТ ПАДАЮЩИХ КОРОБОЧЕК ЗА КУРСОРОМ === */
+    // --- КОД ДЛЯ ЭФФЕКТА ПАДАЮЩИХ КОРОБОЧЕК ---
     let canCreateParticle = true;
     document.addEventListener('mousemove', function(e) {
         if (!canCreateParticle) return;
@@ -75,8 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         particle.addEventListener('animationend', () => { particle.remove(); });
     }
 
-
-    /* === 5. ЗАГРУЗКА ДАННЫХ И ПОСТРОЕНИЕ САЙТА === */
+    // --- ЗАГРУЗКА ДАННЫХ ИЗ CONFIG.JSON ---
     const configPath = 'config.json';
     fetch(configPath)
         .then(response => { if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); } return response.json(); })
@@ -85,11 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* ==========================================================================
-   ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (УВЕДОМЛЕНИЯ, ФОРМА, ГАЛЕРЕЯ)
-   ========================================================================== */
-
-// --- ФУНКЦИЯ ДЛЯ ПОКАЗА УВЕДОМЛЕНИЙ ---
+// --- ФУНКЦИИ УВЕДОМЛЕНИЙ И ОТПРАВКИ ФОРМЫ ---
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -98,8 +97,6 @@ function showNotification(message, type = 'success') {
     setTimeout(() => { notification.classList.add('show'); }, 100);
     setTimeout(() => { notification.classList.remove('show'); setTimeout(() => { document.body.removeChild(notification); }, 500); }, 4000);
 }
-
-// --- ФУНКЦИЯ ДЛЯ ОТПРАВКИ ФОРМЫ ЧЕРЕЗ EMAILJS ---
 function handleFormSubmit(event) {
     event.preventDefault();
     const form = event.target;
@@ -115,7 +112,19 @@ function handleFormSubmit(event) {
         .finally(() => { button.textContent = originalButtonText; button.disabled = false; });
 }
 
-// --- ГЛАВНАЯ ФУНКЦИЯ, КОТОРАЯ СТРОИТ ВЕСЬ КОНТЕНТ НА СТРАНИЦЕ ---
+// --- НОВАЯ УМНАЯ ФУНКЦИЯ ДЛЯ ПУТЕЙ К КАРТИНКАМ ---
+function normalizeImagePath(path) {
+    if (!path) return 'images/placeholder.png';
+    // Убираем возможный слэш в начале
+    let cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    // Если папки 'images' нет, добавляем ее
+    if (!cleanPath.startsWith('images/')) {
+        cleanPath = `images/${cleanPath}`;
+    }
+    return cleanPath;
+}
+
+// --- ОСНОВНАЯ ФУНКЦИЯ ПОСТРОЕНИЯ САЙТА ---
 function buildWebsite(data) {
     // Заполнение шапки, футера и прочих секций
     document.title = data.header.logoText;
@@ -133,7 +142,7 @@ function buildWebsite(data) {
     const footerEmail = document.getElementById('footer-email');
     footerEmail.textContent = data.header.email;
     footerEmail.href = `mailto:${data.header.email}`;
-    document.getElementById('hero-section').style.backgroundImage = `url(images/${data.hero.backgroundImage})`;
+    document.getElementById('hero-section').style.backgroundImage = `url(${normalizeImagePath(data.hero.backgroundImage)})`;
     document.getElementById('hero-headline').textContent = data.hero.headline;
     document.getElementById('hero-cta').textContent = data.hero.callToAction;
     document.getElementById('collection-title').textContent = data.collection.title;
@@ -166,8 +175,7 @@ function buildWebsite(data) {
         
         let firstImage = 'images/placeholder.png'; 
         if (item.images && Array.isArray(item.images) && item.images.length > 0) {
-            const imagePath = item.images[0];
-            firstImage = imagePath.startsWith('images/') ? imagePath : `images/${imagePath}`;
+            firstImage = normalizeImagePath(item.images[0]); // Используем новую функцию
         }
         
         const galleryItem = document.createElement('div');
@@ -185,7 +193,7 @@ function buildWebsite(data) {
 }
 
 
-/// --- ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА (ИСПРАВЛЕННАЯ ВЕРСИЯ) ---
+// --- ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА (ИСПРАВЛЕНО) ---
 const modalContainer = document.getElementById('modal-container');
 const modalContent = modalContainer.querySelector('.modal-content');
 
@@ -199,25 +207,21 @@ function openModal(itemData) {
         characteristicsHTML += '</ul></div>';
     }
 
-    // --- ОБНОВЛЕННАЯ ЛОГИКА СОЗДАНИЯ ГАЛЕРЕИ ---
-    let mainViewerHTML = '';
-    let thumbnailsHTML = '';
     const has3DModel = itemData.model_glb;
     const hasImages = itemData.images && Array.isArray(itemData.images) && itemData.images.length > 0;
-    const firstImage = hasImages ? (itemData.images[0].startsWith('images/') ? itemData.images[0] : `images/${itemData.images[0]}`) : 'images/placeholder.png';
-
+    
     // По умолчанию всегда показываем ПЕРВОЕ ФОТО
-    mainViewerHTML = `<img class="modal-main-image" src="${firstImage}" alt="Главное фото товара">`;
+    const firstImage = hasImages ? normalizeImagePath(itemData.images[0]) : 'images/placeholder.png';
+    let mainViewerHTML = `<img class="modal-main-image" src="${firstImage}" alt="Главное фото товара">`;
 
     // Создаем превью (thumbnails)
+    let thumbnailsHTML = '';
     if (hasImages) {
         itemData.images.forEach((imgSrc, index) => {
-            const fullImgSrc = imgSrc.startsWith('images/') ? imgSrc : `images/${imgSrc}`;
-            // Первое фото будет активным по умолчанию
+            const fullImgSrc = normalizeImagePath(imgSrc);
             thumbnailsHTML += `<img src="${fullImgSrc}" class="${index === 0 ? 'active' : ''}" data-type="image" alt="Миниатюра товара">`;
         });
     }
-    // Если есть 3D-модель, просто добавляем ее как еще одну опцию
     if (has3DModel) {
         thumbnailsHTML += `<div class="thumb-3d" data-type="3d">3D</div>`;
     }
@@ -239,13 +243,11 @@ function openModal(itemData) {
     
     modalContainer.classList.add('visible');
 
-    // Логика закрытия
     modalContainer.querySelector('.modal-close').addEventListener('click', closeModal);
     modalContainer.addEventListener('click', (e) => {
         if (e.target === modalContainer) { closeModal(); }
     });
 
-    // --- ОБНОВЛЕННАЯ ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ---
     const mainViewerContainer = modalContent.querySelector('#main-viewer-container');
     const allThumbnails = modalContent.querySelectorAll('.modal-thumbnails > *');
 
@@ -254,15 +256,14 @@ function openModal(itemData) {
             allThumbnails.forEach(t => t.classList.remove('active'));
             thumb.classList.add('active');
 
-            // Меняем главный контент
             if (thumb.dataset.type === '3d') {
                 mainViewerContainer.innerHTML = `
                     <model-viewer class="modal-main-image" 
-                        src="${itemData.model_glb}"
+                        src="${normalizeImagePath(itemData.model_glb)}"
                         auto-rotate
                         alt="3D модель ${itemData.name}">
                     </model-viewer>`;
-            } else { // Если это картинка
+            } else {
                 mainViewerContainer.innerHTML = `<img class="modal-main-image" src="${thumb.src}" alt="Фото товара">`;
             }
         });
