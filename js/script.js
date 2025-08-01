@@ -193,7 +193,7 @@ function buildWebsite(data) {
 }
 
 
-// --- ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА (ИСПРАВЛЕННАЯ ВЕРСИЯ) ---
+// --- ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА (ИСПРАВЛЕННАЯ ВЕРСИЯ С 3D) ---
 const modalContainer = document.getElementById('modal-container');
 const modalContent = modalContainer.querySelector('.modal-content');
 
@@ -212,22 +212,32 @@ function openModal(itemData) {
     let thumbnailsHTML = '';
     const has3DModel = itemData.model_glb;
     const hasImages = itemData.images && Array.isArray(itemData.images) && itemData.images.length > 0;
-    const firstImage = hasImages ? (itemData.images[0].startsWith('images/') ? itemData.images[0] : `images/${itemData.images[0]}`) : 'images/placeholder.png';
-
-    // По умолчанию всегда показываем ПЕРВОЕ ФОТО
-    mainViewerHTML = `<img class="modal-main-image" src="${firstImage}" alt="Главное фото товара">`;
+    
+    // По умолчанию показываем 3D-модель, если она есть. Если нет - первое фото.
+    if (has3DModel) {
+        mainViewerHTML = `
+            <model-viewer class="modal-main-image" 
+                src="${itemData.model_glb}"
+                camera-controls
+                auto-rotate
+                ar
+                ar-scale="fixed"
+                alt="3D модель ${itemData.name}">
+            </model-viewer>`;
+    } else if (hasImages) {
+        mainViewerHTML = `<img class="modal-main-image" src="${normalizeImagePath(itemData.images[0])}" alt="Главное фото товара">`;
+    }
 
     // Создаем превью (thumbnails)
+    if (has3DModel) {
+        thumbnailsHTML += `<div class="thumb-3d active" data-type="3d">3D</div>`;
+    }
     if (hasImages) {
         itemData.images.forEach((imgSrc, index) => {
-            const fullImgSrc = imgSrc.startsWith('images/') ? imgSrc : `images/${imgSrc}`;
-            // Первое фото будет активным по умолчанию
-            thumbnailsHTML += `<img src="${fullImgSrc}" class="${index === 0 ? 'active' : ''}" data-type="image" alt="Миниатюра товара">`;
+            const fullImgSrc = normalizeImagePath(imgSrc);
+            const isActive = !has3DModel && index === 0;
+            thumbnailsHTML += `<img src="${fullImgSrc}" class="${isActive ? 'active' : ''}" data-type="image" alt="Миниатюра товара">`;
         });
-    }
-    // Если есть 3D-модель, просто добавляем ее как еще одну опцию
-    if (has3DModel) {
-        thumbnailsHTML += `<div class="thumb-3d" data-type="3d">3D</div>`;
     }
 
     modalContent.innerHTML = `
@@ -262,15 +272,17 @@ function openModal(itemData) {
             allThumbnails.forEach(t => t.classList.remove('active'));
             thumb.classList.add('active');
 
-            // Меняем главный контент
             if (thumb.dataset.type === '3d') {
                 mainViewerContainer.innerHTML = `
                     <model-viewer class="modal-main-image" 
                         src="${itemData.model_glb}"
+                        camera-controls
                         auto-rotate
+                        ar
+                        ar-scale="fixed"
                         alt="3D модель ${itemData.name}">
                     </model-viewer>`;
-            } else { // Если это картинка
+            } else {
                 mainViewerContainer.innerHTML = `<img class="modal-main-image" src="${thumb.src}" alt="Фото товара">`;
             }
         });
