@@ -15,7 +15,7 @@
     --heading-font: 'Oswald', sans-serif;      /* Шрифт для заголовков */
     
     /* --- Дизайн --- */
-    --main-border-radius: 20px;                /* <-- ГЛАВНЫЙ ПАРАМЕТР СКРУГЛЕНИЯ */
+    --main-border-radius: 15px;                /* <-- ГЛАВНЫЙ ПАРАМЕТР СКРУГЛЕНИЯ */
 }
 
 /* --- Темная тема --- */
@@ -240,7 +240,7 @@ body:not(.dark-mode):not(.glass-mode) .sun-icon {
     transition: background-color 0.3s ease; 
     text-decoration: none; 
 }
-.cta-button:hover { background-color: #8a6c4d; color: white; }
+.cta-button:hover { background-color: #3d3b3b; color: white; }
 #gyro-permission-button { display: none; margin-top: 20px; background-color: #444; }
 #gyro-permission-button:hover { background-color: #222; }
 
@@ -279,20 +279,24 @@ body:not(.glass-mode) .model-section model-viewer {
 /* У карточек товаров и 3D-модели свой эффект стекла */
 .glass-mode .gallery-item,
 .glass-mode .model-section model-viewer {
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+     background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     border-radius: var(--main-border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .glass-mode h2, .glass-mode p, .glass-mode .item-info h3 {
     text-shadow: 0px 1px 3px rgba(0,0,0,0.1);
 }
 .glass-mode #contact-form input, .glass-mode #contact-form textarea {
-    background: rgba(255,255,255, 0.2);
-    border: 1px solid rgba(255,255,255, 0.4);
-    color: var(--heading-color);
+     background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    border-radius: var(--main-border-radius);
 }
 .glass-mode #contact-form input::placeholder, .glass-mode #contact-form textarea::placeholder {
     color: var(--heading-color);
@@ -315,13 +319,15 @@ body:not(.glass-mode) .model-section model-viewer {
                 inset 0 0 100px 50px rgba(0, 0, 0, 0.1);
 }
 
+
 /* Добавляем тень к тексту ТОЛЬКО внутри модального окна в glass-режиме */
 .glass-mode .modal-details h2,
 .glass-mode .modal-details p,
 .glass-mode .modal-details h3,
 .glass-mode .modal-details li {
    /*xt-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5); /* Более заметная тень для текста */
-    color: black;
+    color: white;
+
 }
 
 /* ==========================================================================
@@ -392,11 +398,12 @@ body:not(.glass-mode) .modal-content {
 
 /* Для стеклянной темы добавляем эффект стекла */
 .glass-mode .modal-content {
-    background: var(--glass-bg);
+      background: var(--glass-bg);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    border-radius: var(--main-border-radius);
 }
 .modal-container.visible .modal-content { transform: scale(1); }
 .modal-body { display: flex; gap: 30px; }
