@@ -151,5 +151,9 @@
       "pinterest_url": "https://pinterest.com/",
       "facebook_url": "https://facebook.com/"
     }
+  },
+  "model": {
+    "title": "THE BOXBOY",
+    "text": "..."
   }
 }
